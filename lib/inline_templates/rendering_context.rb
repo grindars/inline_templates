@@ -1,10 +1,16 @@
 module InlineTemplates
-  class RenderingContext < BasicObject
+  class RenderingContext < BlankObject
+    make_blank :instance_exec, :instance_variable_set
+
     def initialize(context, locals, builder)
       @_inlinetemplates_context = context
       @_inlinetemplates_locals = locals
       @_inlinetemplates_evaluating = true
       @_inlinetemplates_builder = builder
+
+      context.instance_variables.each do |var|
+        instance_variable_set var, context.instance_variable_get(var)
+      end
     end
  
     def t(obj)

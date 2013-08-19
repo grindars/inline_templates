@@ -1,5 +1,7 @@
 module InlineTemplates
-  class BufferWrapper < BasicObject
+  class BufferWrapper < BlankObject
+    make_blank :respond_to?
+
     def initialize(object, buffer)
       @object = object
       @buffer = buffer
@@ -7,27 +9,19 @@ module InlineTemplates
 
     def __inline_templates_object; @object; end
  
-    [ :!, :!=, :==, :__id__, :__send__, :equal?, :instance_eval, :instance_exec ].each do |method|
-      define_method method do |*args, &block|
-        args.map! &BufferWrapper.method(:unwrap)
-
-        @object.__send__ method, *args, &block
-      end
-    end
- 
     def ~
       @buffer.append = @object
       @object
     end
- 
-    def method_missing(name, *args, &block)
-      if name == :respond_to? && args.length >= 1 && args.first == :__inline_templates_object
-        return true
-      end
 
+    def method_missing(name, *args, &block)
       args.map! &BufferWrapper.method(:unwrap)
 
       BufferWrapper.wrap @object.__send__(name, *args, &block), @buffer
+    end
+
+    def respond_to_missing?(name, include_private = false)
+      @object.respond_to?(name, include_private)
     end
  
     def self.wrap(result, buffer)

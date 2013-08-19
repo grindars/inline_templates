@@ -3,6 +3,7 @@ require "action_view"
 
 require "inline_templates/version"
 require "inline_templates/builder"
+require "inline_templates/blank_object"
 require "inline_templates/buffer_wrapper"
 require "inline_templates/rendering_context"
 require "inline_templates/helper"

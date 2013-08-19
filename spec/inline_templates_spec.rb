@@ -74,5 +74,11 @@ describe InlineTemplates do
         ~ h('<br />')
       end.should == "<br />"
     end
+
+    it 'passes instance variables' do
+      test_rit do
+        ~ t(@virtual_path)
+      end.should == "(inline)"
+    end
   end
 end

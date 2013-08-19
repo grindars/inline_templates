@@ -18,7 +18,7 @@ def test_rit(locals = {}, &template)
    
   view = ActionView::Base.new inner_context, assigns, controller, formats
 
-  InlineTemplates.render view, {}, locals, &template
+  InlineTemplates.render view, { virtual_path: "(inline)" }, locals, &template
 end
 
 class TestController < ActionController::Base
