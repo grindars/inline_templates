@@ -2,6 +2,8 @@ module InlineTemplates
   class BufferWrapper < BlankObject
     make_blank :respond_to?
 
+    IMPLICIT_CAST_METHODS = ::Set.new([ :to_int, :to_ary, :to_str, :to_sym, :to_hash, :to_proc, :to_io ])
+
     def initialize(object, buffer)
       @object = object
       @buffer = buffer
@@ -20,7 +22,7 @@ module InlineTemplates
 
       result = @object.__send__(name, *args, &block)
 
-      return result if name.to_s == "to_str"
+      return result if IMPLICIT_CAST_METHODS.include?(name.to_sym)
 
       BufferWrapper.wrap result, @buffer
     end

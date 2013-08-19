@@ -1,5 +1,6 @@
 require "active_support"
 require "action_view"
+require 'set'
 
 require "inline_templates/version"
 require "inline_templates/builder"
