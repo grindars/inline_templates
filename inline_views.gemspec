@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = InlineTemplates::VERSION
   spec.authors       = ["Sergey Gridasov"]
   spec.email         = ["grindars@gmail.com"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
-  spec.homepage      = ""
+  spec.description   = %q{Inline templates for Rails controllers with Arbre-like DSL}
+  spec.summary       = %q{Inline templates for Rails}
+  spec.homepage      = "https://github.com/grindars/inline_templates"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
