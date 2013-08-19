@@ -10,12 +10,13 @@ module InlineTemplates
     def __inline_templates_object; @object; end
  
     def ~
-      @buffer.append = @object
+      @buffer.instance_variable_get(:@_inlinetemplates_context).output_buffer.append = @object
       @object
     end
 
     def method_missing(name, *args, &block)
       args.map! &BufferWrapper.method(:unwrap)
+      block = BufferWrapper.create_proxy_proc(block, @buffer) unless block.nil?
 
       BufferWrapper.wrap @object.__send__(name, *args, &block), @buffer
     end
@@ -37,6 +38,19 @@ module InlineTemplates
         obj.__inline_templates_object
       else
         obj
+      end
+    end
+
+    def self.create_proxy_proc(nested, buffer)
+      proc do |*args, &block|
+        unless @_inlinetemplates_context.nil?
+          ::Kernel.puts "OH! block in context!"
+        end
+
+        args.map! { |arg| BufferWrapper.wrap arg, buffer }
+        block = BufferWrapper.create_proxy_proc(block, buffer) unless block.nil?
+
+        nested.call *args, &block
       end
     end
   end

@@ -1,28 +1,28 @@
 module InlineTemplates
   class RenderingContext < BlankObject
-    make_blank :instance_exec, :instance_variable_set
+    make_blank :instance_exec, :instance_variable_get, :instance_variable_set
 
     def initialize(context, locals, builder)
       @_inlinetemplates_context = context
       @_inlinetemplates_locals = locals
-      @_inlinetemplates_evaluating = true
       @_inlinetemplates_builder = builder
 
       context.instance_variables.each do |var|
-        instance_variable_set var, context.instance_variable_get(var)
+        instance_variable_set var, BufferWrapper.wrap(context.instance_variable_get(var), self)
       end
     end
  
     def t(obj)
-      BufferWrapper.wrap obj.to_s, @_inlinetemplates_context.output_buffer
+      BufferWrapper.wrap obj.to_s, self
     end
 
     def h(obj)
-      BufferWrapper.wrap obj.to_s.html_safe, @_inlinetemplates_context.output_buffer
+      BufferWrapper.wrap obj.to_s.html_safe, self
     end
  
     def method_missing(name, *args, &block)
       args.map! &BufferWrapper.method(:unwrap)
+      block = BufferWrapper.create_proxy_proc(block, self) unless block.nil?
 
       if @_inlinetemplates_locals.include?(name) && args.length == 0
         result = @_inlinetemplates_locals[name]
@@ -37,7 +37,7 @@ module InlineTemplates
         super
       end
  
-      BufferWrapper.wrap result, @_inlinetemplates_context.output_buffer
+      BufferWrapper.wrap result, self
     end
   end
 end
