@@ -88,5 +88,36 @@ describe InlineTemplates do
         end
       end.should == "<form accept-charset=\"UTF-8\" action=\"foo\" method=\"post\"><div style=\"margin:0;padding:0;display:inline\"><input name=\"utf8\" type=\"hidden\" value=\"&#x2713;\" /></div><input name=\"commit\" type=\"submit\" value=\"Save Foo\" /></form>"
     end
+
+    it 'supports instance_exec of blocks' do
+      test_class = Class.new do
+        def initialize(template, &block)
+          @template = template
+          @buffer = ""
+          instance_exec &block
+        end
+
+        def to_s
+          @buffer.html_safe
+        end
+
+        def foo
+          @buffer << "test"
+        end
+
+        def bar(&block)
+          @buffer << @template.capture('foo', &block)
+        end
+      end
+
+      test_rit do
+        ~ invoke_helper_like_class(test_class) do
+          foo
+          bar do |arg|
+            ~ strong(arg)
+          end
+        end
+      end.to_s.should == 'test<strong>foo</strong>'
+    end
   end
 end

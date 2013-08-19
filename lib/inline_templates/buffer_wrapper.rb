@@ -10,7 +10,7 @@ module InlineTemplates
     def __inline_templates_object; @object; end
  
     def ~
-      @buffer.instance_variable_get(:@_inlinetemplates_context).output_buffer.append = @object
+      @buffer.inlinetemplates_append @object
       @object
     end
 
@@ -42,6 +42,8 @@ module InlineTemplates
     end
 
     def self.create_proxy_proc(nested, buffer)
+      original_self = self
+
       proc do |*args, &block|
         unless @_inlinetemplates_context.nil?
           ::Kernel.puts "OH! block in context!"
@@ -50,7 +52,11 @@ module InlineTemplates
         args.map! { |arg| BufferWrapper.wrap arg, buffer }
         block = BufferWrapper.create_proxy_proc(block, buffer) unless block.nil?
 
-        nested.call *args, &block
+        if self.equal? original_self
+          nested.call *args, &block
+        else
+          buffer.inlinetemplates_instance_exec self, *args, &nested
+        end
       end
     end
   end

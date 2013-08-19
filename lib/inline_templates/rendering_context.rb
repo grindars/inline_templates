@@ -2,10 +2,11 @@ module InlineTemplates
   class RenderingContext < BlankObject
     make_blank :instance_exec, :instance_variable_get, :instance_variable_set
 
-    def initialize(context, locals, builder)
+    def initialize(context, locals, builder, view = nil)
       @_inlinetemplates_context = context
       @_inlinetemplates_locals = locals
       @_inlinetemplates_builder = builder
+      @_inlinetemplates_view = view || context
 
       context.instance_variables.each do |var|
         instance_variable_set var, BufferWrapper.wrap(context.instance_variable_get(var), self)
@@ -19,6 +20,14 @@ module InlineTemplates
     def h(obj)
       BufferWrapper.wrap obj.to_s.html_safe, self
     end
+
+    def inlinetemplates_append(obj)
+      @_inlinetemplates_view.output_buffer.append = obj
+    end
+
+    def inlinetemplates_instance_exec(new_self, *args, &block)
+      RenderingContext.new(new_self, @_inlinetemplates_locals, @_inlinetemplates_builder, @_inlinetemplates_view).instance_exec(*args, &block)
+    end
  
     def method_missing(name, *args, &block)
       args.map! &BufferWrapper.method(:unwrap)
@@ -31,7 +40,7 @@ module InlineTemplates
         result = @_inlinetemplates_context.__send__ name, *args, &block
  
       elsif @_inlinetemplates_builder.can_build?(name)
-        result = @_inlinetemplates_builder.build @_inlinetemplates_context, name, *args, &block
+        result = @_inlinetemplates_builder.build @_inlinetemplates_view, name, *args, &block
  
       else
         super

@@ -18,6 +18,10 @@ def test_rit(locals = {}, &template)
    
   view = ActionView::Base.new inner_context, assigns, controller, formats
 
+  def view.invoke_helper_like_class(klass, *args, &block)
+    klass.new(self, *args, &block).to_s
+  end
+
   InlineTemplates.render view, { virtual_path: "(inline)" }, locals, &template
 end
 
