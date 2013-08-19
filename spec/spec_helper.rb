@@ -31,5 +31,9 @@ class TestController < ActionController::Base
       ~ div("test")
     end
   end
+
+  def test_file
+    render :file => File.expand_path("../support/test.rit", __FILE__)
+  end
 end
 

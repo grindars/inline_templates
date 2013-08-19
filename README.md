@@ -26,6 +26,8 @@ end
 
 Plain strings (i.e. not helpers output or variable values) should be escaped by `t` or `h` helper before passing them to `~` for output. `t` should be used for text and `h` should be used for HTML.
 
+Inline Templates can also be used in views. It handles `.rit` files with same syntax.
+
 ## Installation
 
 Add this line to your application's Gemfile:

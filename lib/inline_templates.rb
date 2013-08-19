@@ -6,7 +6,8 @@ require "inline_templates/builder"
 require "inline_templates/blank_object"
 require "inline_templates/buffer_wrapper"
 require "inline_templates/rendering_context"
-require "inline_templates/helper"
+require "inline_templates/helpers"
+require "inline_templates/template_handler.rb"
 
 module InlineTemplates
   def self.render(view, details, locals, &block)
@@ -31,7 +32,8 @@ module InlineTemplates
     end
  
     template = ActionView::Template.new("", identifier, handler, details)
-    template.send :compile!, view
     template.render view, locals
   end
 end
+
+ActionView::Template.register_template_handler :rit, InlineTemplates::TemplateHandler.new
