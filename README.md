@@ -22,8 +22,9 @@ For example:
     end
   end
 end
+```
 
-
+Plain strings (i.e. not helpers output or variable values) should be escaped by `t` or `h` helper before passing them to `~` for output. `t` should be used for text and `h` should be used for HTML.
 
 Sponsored by [Evil Martians](http://evilmartians.com/).
 
@@ -64,7 +65,7 @@ view = ActionView::Base.new context, assigns, controller, formats
 inline_html = InlineTemplates.render view, details, locals do
   ~ t('foo')
 end
-````
+```
 
 ## Contributing
 
