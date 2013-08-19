@@ -18,7 +18,11 @@ module InlineTemplates
       args.map! &BufferWrapper.method(:unwrap)
       block = BufferWrapper.create_proxy_proc(block, @buffer) unless block.nil?
 
-      BufferWrapper.wrap @object.__send__(name, *args, &block), @buffer
+      result = @object.__send__(name, *args, &block)
+
+      return result if name.to_s == "to_str"
+
+      BufferWrapper.wrap result, @buffer
     end
 
     def respond_to_missing?(name, include_private = false)
