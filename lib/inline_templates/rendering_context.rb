@@ -7,8 +7,12 @@ module InlineTemplates
       @_inlinetemplates_builder = builder
     end
  
-    def P(obj)
-      @_inlinetemplates_context.output_buffer.append = obj
+    def t(obj)
+      BufferWrapper.wrap obj.to_s, @_inlinetemplates_context.output_buffer
+    end
+
+    def h(obj)
+      BufferWrapper.wrap obj.to_s.html_safe, @_inlinetemplates_context.output_buffer
     end
  
     def method_missing(name, *args, &block)

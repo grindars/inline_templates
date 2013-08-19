@@ -21,7 +21,9 @@ module InlineTemplates
     end
  
     def method_missing(name, *args, &block)
-      return true if name == :respond_to? && (args.first == :__inline_templates_object)
+      if name == :respond_to? && args.length >= 1 && args.first == :__inline_templates_object
+        return true
+      end
 
       args.map! &BufferWrapper.method(:unwrap)
 

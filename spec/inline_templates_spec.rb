@@ -62,5 +62,17 @@ describe InlineTemplates do
         end
       end.should == '<ul><li>1</li><li>2</li><li>3</li><li>4</li></ul>'
     end
+
+    it 'implements t helper' do
+      test_rit do
+        ~ t('<br />')
+      end.should == "&lt;br /&gt;"
+    end
+
+    it 'implements h helper' do
+      test_rit do
+        ~ h('<br />')
+      end.should == "<br />"
+    end
   end
 end
