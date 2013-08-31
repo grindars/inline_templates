@@ -51,10 +51,6 @@ module InlineTemplates
       original_self = self
 
       proc do |*args, &block|
-        unless @_inlinetemplates_context.nil?
-          ::Kernel.puts "OH! block in context!"
-        end
-
         args.map! { |arg| BufferWrapper.wrap arg, buffer }
         block = BufferWrapper.create_proxy_proc(block, buffer) unless block.nil?
 
